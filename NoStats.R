@@ -1,10 +1,7 @@
 #hella beta
 #hella beta 
 
-
-
-
-
+#biocLite?
 
 library(GenomicRanges)
 library(GenomicAlignments)
