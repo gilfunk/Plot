@@ -1,20 +1,24 @@
-#hella beta
-#hella beta 
 
-#biocLite?
+#hella hella beta 
+
+#you may need to get some packages from the bioconductor first if you no haz 
+#source("https://bioconductor.org/biocLite.R")
 
 library(GenomicRanges)
 library(GenomicAlignments)
 library(tidyverse)
 
 getwd()
+#setwd('Desktop/LCANAL/16s/')
 list.files()
+
     ##These are the regions:
     data="180607.nL_hg38.bam" 
     target.bed="tertTSS_15kbPLusMinus.bed"
     
     #how file name is saved:
-    nombre='180607.tert15kbPlMin'
+    nombre='180607.chr510Mb'
+    
 ##########################    
     
     reads=readGAlignments(data, use.names=T)
@@ -46,37 +50,18 @@ list.files()
     ontarg.tb.neg=mutate(ontarg.tb.neg,   y1=-(y1), y0=-(y0)) 
 
 #make plot object for rectangular read plot    
-    g.rect=ggplot(data=ontarg.tb.pos,mapping=aes(xmin=start,xmax=end,ymin=y0,ymax=y1))+
-      geom_rect(color='red')+ theme_bw()+
-      geom_rect(data=ontarg.tb.neg, color='blue')+
+    g.rect=ggplot(data=ontarg.tb.pos)+
+   # mapping=aes(xmin=start,xmax=end,ymin=y0,ymax=y1))
+      geom_rect(mapping=aes(xmin=start,xmax=end,ymin=y0,ymax=y1), color='red')+ theme_bw()+
+      geom_rect(mapping=aes(xmin=start,xmax=end,ymin=y0,ymax=y1), data=ontarg.tb.neg, color='blue')+
       labs(x="Coordinate",y="Read")+xlim(target$start,target$stop)
 
-    #get coverage data
- #   cov.targ.pos=as.vector(coverage(ontarg.pos)[[target$chr]])
-
-#    cov.targ.pos<-cov.targ.pos[target$start:target$stop]
-
- #   cov.targ.neg=as.vector(coverage(ontarg.neg)[[target$chr]])    
-#    cov.targ.neg<-cov.targ.neg[target$start:target$stop]
- #   cov.targ.neg <- -1*(cov.targ.neg)
-
- #   cov.plt.pos= tibble(cov=cov.targ.pos, pos=seq(start(target.gr),end(target.gr)))
-
-   # cov.plt.pos
-#    cov.plt.neg= tibble(cov=cov.targ.neg, pos=seq(start(target.gr),end(target.gr)))
- 
-   # guide.df=data.frame(PAMs=c(1296412,1288556) , y0=c(0,0), crSTART=c())
-    
-    g.guide=ggplot(data=guide.df)+ 
-      theme_bw()+geom_point(mapping=aes(x=PAMs, y=y0), size=5, color="red") + xlim(target$start,target$stop)
-       
- #   g.cov=ggplot()+geom_point(data= )
-    
-  #  data=cov.plt.pos,mapping=aes(x=pos,y=cov))+geom_line(color='red')+
-#      theme_bw()+geom_line( data=cov.plt.neg, color='blue'   ) +xlim(target$start,target$stop)#+ylim(-50, 50)
+    #hardcoding in sites of crRNAs for rn (TERT)
+    guide.df=data.frame(PAMs=c(1296412,1288556) , y0=c(0,0))
+    g.rect <- g.rect +  geom_point( data=guide.df,  mapping=aes(x=PAMs, y=y0), size=0.1, color="purple"          )
     
     pdf(paste0(nombre, ".target_plot.pdf"))
     print(g.rect) 
-    print(g.guide)
+#    print(g.guide)
 #    print(g.cov) 
     dev.off()
